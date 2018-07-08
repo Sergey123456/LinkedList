@@ -7,6 +7,8 @@ import java.awt.Button;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.awt.event.ActionEvent;
 import java.awt.Panel;
 import java.awt.FlowLayout;
@@ -35,7 +37,7 @@ import javax.swing.border.TitledBorder;
 public class TestGUI {
 
 	private JFrame frame;
-	public LinkedList<Integer> linkedList;
+	public LinkedList<Integer> linkedList = new LinkedList<>();
 
 	/**
 	 * Launch the application.
@@ -253,6 +255,41 @@ public class TestGUI {
 			}
 		});
 		horizontalBox_2.add(btnNewButton_4);
+		
+		Box horizontalBox_9 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_9);
+		
+		JButton btnIterator = new JButton("Iterator");
+		btnIterator.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (linkedList.isEmpty()) {
+					prnt("empty", textArea);
+					return;
+				}
+				
+				Iterator<Integer> it = linkedList.iterator();
+				while (it.hasNext()) {
+					prnt(it.next().toString(), textArea);
+				}
+			}
+		});
+		horizontalBox_9.add(btnIterator);
+		
+		JButton btnListIterator = new JButton("List iterator");
+		btnListIterator.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (linkedList.isEmpty()) {
+					prnt("empty", textArea);
+					return;
+				}
+				ListIterator<Integer> listIterator = linkedList.listIterator();
+				while (listIterator.hasNext()) {
+					prnt(listIterator.next().toString(), textArea);
+				}
+				
+			}
+		});
+		horizontalBox_9.add(btnListIterator);
 		
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut);

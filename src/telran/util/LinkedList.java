@@ -9,6 +9,33 @@ import java.util.ListIterator;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.soap.Node;
 
+// Class LinkedList immitates queue
+// implements interface List
+// **************************API:***********************************************
+// boolean 			add(E) 								- overrided  
+// void 			add(int, E)							- overrided
+// boolean 			addAll(Collection<? extends E>)
+// boolean			addAll(int, Collection<? extends E>)
+// void 			clear()								- overrided
+// boolean 			contains(Object)					- overrided
+// boolean			containsAll(Collection<?>)
+// E				get(int)							- overrided
+// int				indexOf(Object)						- overrided
+// boolean			isEmpty()							- overrided
+// Iterator<E>		iterator()							- overrided
+// int				lastIndexOf(Object)					- overrided
+// ListIterator<E>	listIterator()						- in the work
+// ListIterator<E>	listIterator(int)
+// E				remove(int)							- overrided
+// boolean			remove(Object)						- overrided
+// boolean			removeAll(Collection<?>)
+// boolean			retainAll(Collection<?>)
+// E				set(int, E)							- overrided
+// int				size()								- overrided
+// List<E>			subList(int, int)
+// Object[]			toArray()							- overrided
+// <T> T[]			toArray(T[])
+//****************************API***********************************************
 public class LinkedList<E> implements List<E> {
 
 	private NodeList<E> head;
@@ -45,8 +72,26 @@ public class LinkedList<E> implements List<E> {
 
 	@Override
 	public Iterator<E> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Itr();
+	}
+	
+	private class Itr implements Iterator<E> {
+		int cursor = 0;       		// index of next element to return
+		NodeList<E> currentNode = head;
+
+		@Override
+		public boolean hasNext() {
+			return (!isEmpty()) && (currentNode != null);
+		}
+
+		@Override
+		public E next() {
+			E currentNodeValue = currentNode.object;
+			cursor++;
+			currentNode = currentNode.next;
+			return currentNodeValue;
+		}
+		
 	}
 
 	@Override
@@ -146,27 +191,6 @@ public class LinkedList<E> implements List<E> {
 		return res;
 	}
 
-	private void removeNode(NodeList<E> previousNode, NodeList<E> currentNode) {
-		// Single Node
-		if (size == 1) {
-			head = null;
-			tail = null;
-		// first Node
-		} else if (previousNode == null) {
-			head 				= currentNode.next;
-			currentNode.next 	= null;
-		// last Node
-		} else if (currentNode.next == null) {
-			tail				= previousNode;
-			previousNode.next  	= null;
-		// middle Node
-		} else {
-			previousNode.next 	= currentNode.next;
-			currentNode.next	= null;
-		}
-		size--;
-	}
-
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		// TODO Auto-generated method stub
@@ -226,31 +250,7 @@ public class LinkedList<E> implements List<E> {
 		}
 		return res;
 	}
-
-	private NodeList<E> getNodeList(int index) {
-		NodeList<E> res = null;
-		if (validateIndex(index)) {
-			NodeList<E> currentNode = head;
-			for (int i = 0; i < index; i++) {
-				currentNode = currentNode.next;
-			}
-			res = currentNode;
-		}
-		return res;
-	}
 	
-	private NodeList<E> getNodeList(Object o) {
-		NodeList<E> res 		= null;
-		NodeList<E> currentNode = head;
-		for (int i = 0; i < size && res == null; i++) {
-			if (o.equals(currentNode.object)) {
-				res = currentNode;
-			}
-			currentNode = currentNode.next;
-		}
-		return res;
-	}
-
 	@Override
 	public int indexOf(Object o) {
 		int res = -1;
@@ -279,8 +279,7 @@ public class LinkedList<E> implements List<E> {
 
 	@Override
 	public ListIterator<E> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ListItr(this);
 	}
 
 	@Override
@@ -294,13 +293,11 @@ public class LinkedList<E> implements List<E> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private void initialize() {
-		head = null;
-		tail = null;
-		size = 0;
+	
+	public NodeList<E> getHead() {
+		return head;
 	}
-
+	
 	public E getHeadValue() {
 		return head == null ? null : head.object;
 	}
@@ -310,11 +307,76 @@ public class LinkedList<E> implements List<E> {
 	}
 	
 	
+	//*********************************************************
+	// Private
+	//*********************************************************
 	
+	private void removeNode(NodeList<E> previousNode, NodeList<E> currentNode) {
+		// Single Node
+		if (size == 1) {
+			head = null;
+			tail = null;
+		// first Node
+		} else if (previousNode == null) {
+			head 				= currentNode.next;
+			currentNode.next 	= null;
+		// last Node
+		} else if (currentNode.next == null) {
+			tail				= previousNode;
+			previousNode.next  	= null;
+		// middle Node
+		} else {
+			previousNode.next 	= currentNode.next;
+			currentNode.next	= null;
+		}
+		size--;
+	}
+
+	private NodeList<E> getNodeList(int index) {
+		NodeList<E> res = null;
+		if (validateIndex(index)) {
+			NodeList<E> currentNode = head;
+			for (int i = 0; i < index; i++) {
+				currentNode = currentNode.next;
+			}
+			res = currentNode;
+		}
+		return res;
+	}
+	
+	private NodeList<E> getNodeList(Object o) {
+		NodeList<E> res 		= null;
+		NodeList<E> currentNode = head;
+		for (int i = 0; i < size && res == null; i++) {
+			if (o.equals(currentNode.object)) {
+				res = currentNode;
+			}
+			currentNode = currentNode.next;
+		}
+		return res;
+	}
+
+	private void initialize() {
+		head = null;
+		tail = null;
+		size = 0;
+	}
+
 	private boolean validateIndex(int index) {
 		return index >= 0 && index < size() ? true : false;
 	}
+	
+	public static void main(String[] args) {
+		LinkedList<Integer> linkedList = new LinkedList<>();
+		linkedList.add(5);
+		linkedList.add(10);
+		linkedList.add(15);
+		
+		Iterator<Integer> it = linkedList.iterator();
+		while (it.hasNext()) {
+			Integer integer = (Integer) it.next();
+			System.out.println(integer);
+		}
+		
+	}
 }
-	
-	
-	// addhead, get nodePreviousNode
