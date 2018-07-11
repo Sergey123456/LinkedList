@@ -1,13 +1,10 @@
 package telran.util;
 
-import java.awt.image.RescaleOp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.xml.bind.ValidationEvent;
-import javax.xml.soap.Node;
 
 // Class LinkedList immitates queue
 // implements interface List
@@ -154,6 +151,7 @@ public class LinkedList<E> implements List<E> {
 		return remove(0); 
 	}
 	
+	
 	@Override
 	public E remove(int index) {
 		E res = null;
@@ -169,7 +167,54 @@ public class LinkedList<E> implements List<E> {
 		}
 		return res;
 	}
+
+	public E removeByGranovsky(int index) {
+		if (index < 0 || index > size - 1)
+			return null;
+		if (index == 0) 
+			return removeFirst();
+		if (index == size - 1) 
+			return removeLast();
+		
+		return removeAtIndex(index);
+	}
 	
+	private E removeAtIndex(int index) {
+		NodeList<E> previousNode = getNodeList(index - 1);
+		E res = previousNode.next.object;
+		previousNode.next.object = null;
+		previousNode.next.object = res;
+		previousNode.next = previousNode.next.next;
+		size--;
+		return res;
+	}
+
+	public E removeLast() {
+		if (head == null) 
+			return null;
+		E res = tail.object;
+		if (head == tail) {
+			head = tail = null;
+		} else {
+			tail = getNodeList(size - 2);
+			tail.next = null;
+		}
+		size--;
+		return res;
+	}
+	
+	public E removeFirst() {
+		if (head == null) 
+			return null;
+		E res = head.object;
+		head = head.next;
+		if (head == null) {
+			tail = null;
+		}
+		size--;
+		return res;
+	}
+
 	@Override
 	public boolean remove(Object o) {
 		boolean res = false;
@@ -230,9 +275,15 @@ public class LinkedList<E> implements List<E> {
 	public E get(int index) {
 		E res = null;
 		if (validateIndex(index)) {
-			NodeList<E> currentNode = getNodeList(index);
-			if (currentNode != null) {
-				res = currentNode.object;
+			if (index == 0) {
+				res = head.object;
+			} else if (index == size -1) {
+				res = tail.object;
+			} else {
+				NodeList<E> currentNode = getNodeList(index);
+				if (currentNode != null) {
+					res = currentNode.object;
+				}	
 			}
 		}
 		return res;
@@ -263,7 +314,62 @@ public class LinkedList<E> implements List<E> {
 		}
 		return res;
 	}
+	
+	public int indexOfGranovsky(Object o) {
+		if (o == null)
+			return indexOfNull();
+		
+		return indexOfNonNull(o);
+	}
 
+	private int indexOfNonNull(Object o) {
+		int index = 0;
+		NodeList<E> current = null;
+		for (current = head; 
+				current != null && !o.equals(current.object);
+				current = current.next, index++) {
+		}
+		return current == null ? -1 : index;
+	}
+
+	private int indexOfNull() {
+		int index = 0;
+		NodeList<E> current = null;
+		for (current = head; 
+				current != null && current.object != null;
+				current = current.next, index++) {
+		}
+		return current == null ? -1 : index;
+	}
+
+	public int lastIndexOfGranovsky(Object o) {
+		return o == null ? lastIndexOfNull() : lastIndexNonNull(o);
+	}
+	
+	private int lastIndexNonNull(Object o) {
+		int res = -1;
+		int index = 0;
+		for (NodeList<E> current = head; current != null; 
+				current = current.next, index++) {
+			if (o.equals(current.object)) {
+				res = index;
+			}
+		}
+		return res;
+	}
+	
+	private int lastIndexOfNull() {
+		int res = -1;
+		int index = 0;
+		for (NodeList<E> current = head; current != null; 
+				current = current.next, index++) {
+			if (current.object == null) {
+				res = index;
+			}
+		}
+		return res;
+	}
+	
 	@Override
 	public int lastIndexOf(Object o) {
 		int res = -1;
@@ -345,6 +451,7 @@ public class LinkedList<E> implements List<E> {
 	}
 	
 	private NodeList<E> getNodeList(Object o) {
+		if (validate(o)) return null;
 		NodeList<E> res 		= null;
 		NodeList<E> currentNode = head;
 		for (int i = 0; i < size && res == null; i++) {
@@ -364,6 +471,10 @@ public class LinkedList<E> implements List<E> {
 
 	private boolean validateIndex(int index) {
 		return index >= 0 && index < size() ? true : false;
+	}
+	
+	private boolean validate(Object o) {
+		return o != null ? true : false;
 	}
 	
 	public static void main(String[] args) {

@@ -3,36 +3,23 @@ package telran.util;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import java.awt.Button;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.awt.event.ActionEvent;
-import java.awt.Panel;
-import java.awt.FlowLayout;
-import java.awt.ScrollPane;
 import javax.swing.JButton;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
-import org.omg.CORBA.PRIVATE_MEMBER;
-import org.omg.IOP.CodecPackage.InvalidTypeForEncodingHelper;
 
 import java.awt.Component;
-import javax.swing.JList;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import java.awt.TextArea;
-import java.awt.Scrollbar;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Box;
-import javax.swing.SwingConstants;
 import javax.swing.JPanel;
-import java.awt.Rectangle;
 import java.awt.Dimension;
-import javax.swing.border.TitledBorder;
 
 public class TestGUI {
 
@@ -267,6 +254,10 @@ public class TestGUI {
 					return;
 				}
 				
+				for (Integer integer : linkedList) {
+					prnt(integer.toString(), textArea);
+				}
+				
 				Iterator<Integer> it = linkedList.iterator();
 				while (it.hasNext()) {
 					prnt(it.next().toString(), textArea);
@@ -290,6 +281,14 @@ public class TestGUI {
 			}
 		});
 		horizontalBox_9.add(btnListIterator);
+		
+		JButton btnAddNull = new JButton("Add null");
+		btnAddNull.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				linkedList.add(null);
+			}
+		});
+		horizontalBox_9.add(btnAddNull);
 		
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut);
